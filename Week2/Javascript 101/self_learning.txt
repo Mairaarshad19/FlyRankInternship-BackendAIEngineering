@@ -1,2 +1,0 @@
-CommonJS and ES Modules are both module systems (ways for one file to use code from another). They differ in syntax because they were invented at different times. CommonJS is the older Node.js-specific system using require() and module.exports. ES Modules is the newer, official JavaScript standard using import and export.
-
