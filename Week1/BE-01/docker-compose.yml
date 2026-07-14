@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  # Our Node app
+  app:
+    build: .
+    ports:
+      - "3000:3000"
+    environment:
+      DB_HOST: db          # inside Docker's network, "db" is the database's hostname
+      DB_PORT: 5432         # container-to-container talk uses Postgres's default port
+      DB_USER: postgres
+      DB_PASSWORD: mysecretpassword
+      DB_NAME: taskdb
+    depends_on:
+      - db                 # don't start the app until the db service exists
+
+  # Postgres database
+  db:
+    image: postgres:16
+    environment:
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: taskdb
+    ports:
+      - "5433:5432"        # host:container - lets you psql in from outside if needed
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./init.sql:/docker-entrypoint-initdb.d/init.sql
+
+# Named volume - Docker manages where this actually lives on disk
+volumes:
+  postgres-data:
