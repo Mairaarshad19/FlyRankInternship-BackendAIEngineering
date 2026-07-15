@@ -50,6 +50,7 @@ Interactive docs are available at `http://localhost:3000/docs` once the
 server is running. Every endpoint can be tried directly from the browser
 via "Try it out".
 
+Swagger UI
 
 ![Swagger UI screenshot](./swaggermain-screenshot.jpeg)
 
