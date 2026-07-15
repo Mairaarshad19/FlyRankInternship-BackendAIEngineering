@@ -27,8 +27,11 @@ Server starts on `http://localhost:3000`.
 
 ## Example request
 
+```bash
 curl -i -X POST http://localhost:3000/tasks -H "Content-Type: application/json" -d "{}"
+```
 
+```
 HTTP/1.1 400 Bad Request
 X-Powered-By: Express
 Content-Type: application/json; charset=utf-8
