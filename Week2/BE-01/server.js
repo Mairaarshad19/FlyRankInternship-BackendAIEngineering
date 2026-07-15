@@ -28,4 +28,14 @@ app.get('/health', (req, res) => {
   res.json({ status: "ok" });
 });
 
+app.post('/tasks', (req, res) => {
+  const { title } = req.body;
+  if (!title || title.trim() === '') {
+    return res.status(400).json({ error: "Title is required" });
+  }
+  const task = { id: nextId++, title: title.trim(), done: false };
+  tasks.push(task);
+  res.status(201).json(task);
+});
+
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
