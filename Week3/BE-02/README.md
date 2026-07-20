@@ -47,7 +47,11 @@ SELECT * FROM tasks;
 
 This returned all the tasks currently stored, matching exactly what GET /tasks returns through the API. A screenshot of this is included below.
 
-Show Image
+![DB Browser screenshot 1](./db-browser-screenshot1.jpeg)
+
+![DB Browser screenshot 2](./db-browser-screenshot2.jpeg)
+
+![DB Browser screenshot 3](./db-browser-screenshot3.jpeg) 
 
 What I noticed
 
