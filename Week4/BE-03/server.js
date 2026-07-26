@@ -12,6 +12,9 @@ const swaggerUi = require('swagger-ui-express');
 const openapiDoc = require('./openapi.json');
 app.use('/docs', swaggerUi.serve, swaggerUi.setup(openapiDoc));
 
+// Reusable middleware: checks the Bearer token once, so protected
+// routes don't need to repeat this logic individually.
+
 async function requireAuth(req, res, next) {
   const authHeader = req.headers.authorization;
   if (!authHeader || !authHeader.startsWith('Bearer ')) {
