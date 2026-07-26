@@ -59,3 +59,7 @@ Docs are available at `http://localhost:3000/docs`. Protected routes are marked 
 ## A note on testing
 
 I tested this by signing up with a real email (Supabase rejects obviously fake domains like example.com), logging in to get a token, then hitting the protected routes with that token in the Authorization header. Changing even one character in the token correctly returned a 401. I also temporarily disabled "Confirm email" in the Supabase dashboard while testing locally, so new signups could log in immediately without waiting on a confirmation email.
+
+## Lessons learned
+
+Keeping token verification in a single middleware function made it trivial to add a second protected route (`/protected/dashboard`) without duplicating any auth logic.
