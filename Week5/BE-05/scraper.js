@@ -11,7 +11,6 @@ async function fetchPage(url) {
   return response.data;
 }
 
-// max 1 request/sec — the "polite" part
 const throttle = pThrottle({ limit: 1, interval: 1000 });
 const throttledFetch = throttle(fetchPage);
 
@@ -34,9 +33,18 @@ async function scrapeAllPages() {
   return allBooks;
 }
 
+function cleanBook(book) {
+  return {
+    title: book.title.trim(),
+    price: parseFloat(book.price.replace('£', '')),
+    inStock: book.availability.includes('In stock'),
+  };
+}
+
 async function main() {
-  const books = await scrapeAllPages();
-  console.log(`Scraped ${books.length} books total`);
+  const rawBooks = await scrapeAllPages();
+  const cleanBooks = rawBooks.map(cleanBook);
+  console.log(cleanBooks.slice(0, 3)); // preview first 3
 }
 
 main();
