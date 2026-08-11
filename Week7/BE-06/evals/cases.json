@@ -1,0 +1,10 @@
+[
+  { "input": { "title": "The Great Gatsby", "price": 12.99, "availability": "In stock" }, "expected_category": "fiction" },
+  { "input": { "title": "Intro to Python Programming", "price": 30, "availability": "In stock" }, "expected_category": "non-fiction" },
+  { "input": { "title": "The Very Hungry Caterpillar", "price": 8, "availability": "In stock" }, "expected_category": "childrens" },
+  { "input": { "title": "The Great Catsby", "price": 15.99, "availability": "out of stock" }, "expected_category": "fiction" },
+  { "input": { "title": "Intro to C++ Programming", "price": 70, "availability": "In stock" }, "expected_category": "non-fiction" },
+  { "input": { "title": "The Very Hungry Cat", "price": 10, "availability": "In stock" }, "expected_category": "childrens" },
+  { "input": { "title": "Beauty and the Beast", "price": 100, "availability": "In stock" }, "expected_category": "fiction" },
+  { "input": { "title": "Descendents of the Sun", "price": 90, "availability": "In stock" }, "expected_category": "other" }
+]
