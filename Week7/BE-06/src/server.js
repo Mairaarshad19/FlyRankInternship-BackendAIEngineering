@@ -1,6 +1,6 @@
 require('dotenv').config();
 const express = require('express');
-const { classifyBook } = require('./llm/client');
+const { classifyBookSafe } = require('./llm/client');
 const { inputSchema } = require('./llm/schema');
 
 const app = express();
@@ -22,12 +22,20 @@ app.post('/classify-book', async (req, res) => {
     });
   }
 
-  try {
-    const rawOutput = await classifyBook(parsed.data);
-    res.status(200).json({ raw: rawOutput });
-  } catch (err) {
-    res.status(500).json({ error: 'Model call failed', details: err.message });
+try {
+  const result = await classifyBookSafe(parsed.data);
+  if (!result.success) {
+    const fs = require('fs');
+    fs.appendFileSync('logs/quarantine.jsonl', JSON.stringify({
+      input: parsed.data, error: result.error, raw: result.raw,
+      promptVersion: 'v1', timestamp: new Date().toISOString()
+    }) + '\n');
+    return res.status(422).json({ error: 'Could not produce a valid response' });
   }
+  res.status(200).json(result.data);
+} catch (err) {
+  res.status(500).json({ error: 'Model call failed', details: err.message });
+}
 });
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
