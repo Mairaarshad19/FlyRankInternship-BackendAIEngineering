@@ -8,6 +8,9 @@ app.use(express.json());
 const PORT = process.env.PORT || 3000;
 
 app.post('/classify-book', async (req, res) => {
+  if (process.env.LLM_ENABLED === 'false') {
+    return res.status(503).json({ error: 'AI feature temporarily disabled' });
+  }
   const parsed = inputSchema.safeParse(req.body);
   if (!parsed.success) {
     const field = parsed.error.issues[0].path.join('.');

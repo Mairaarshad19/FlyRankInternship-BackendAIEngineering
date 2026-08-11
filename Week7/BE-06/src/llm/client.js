@@ -14,6 +14,7 @@ const promptTemplate = fs.readFileSync(
 );
 
 async function classifyBook(bookData) {
+  const startTime = Date.now();
   const res = await client.chat.completions.create({
     model: process.env.LLM_MODEL,
     temperature: 0.2,
@@ -22,6 +23,8 @@ async function classifyBook(bookData) {
       { role: 'user', content: JSON.stringify(bookData) },
     ],
   });
+  const durationMs = Date.now() - startTime;
+  logCost('v1', process.env.LLM_MODEL, res.usage, durationMs, false);
   return res.choices[0].message.content;
 }
 
@@ -61,5 +64,31 @@ async function classifyBookSafe(bookData) {
   }
 }
 
+async function callWithRetry(fn, maxRetries = 2) {
+  let delay = 1000;
+  for (let attempt = 0; attempt <= maxRetries; attempt++) {
+    try {
+      return await fn();
+    } catch (err) {
+      const status = err.status;
+      const retryable = status === 429 || (status >= 500 && status < 600) || err.code === 'ETIMEDOUT';
+      if (!retryable || attempt === maxRetries) throw err;
+      const jitter = Math.random() * 300;
+      await new Promise(r => setTimeout(r, delay + jitter));
+      delay *= 2;
+    }
+  }
+}
+
 const { outputSchema } = require('./schema');
+
+function logCost(promptVersion, model, usage, durationMs, repaired) {
+  const fs = require('fs');
+  fs.appendFileSync('logs/cost.jsonl', JSON.stringify({
+    promptVersion, model, inputTokens: usage.prompt_tokens,
+    outputTokens: usage.completion_tokens, durationMs, repaired,
+    timestamp: new Date().toISOString(),
+  }) + '\n');
+}
+
 module.exports = { classifyBook, classifyBookSafe };
