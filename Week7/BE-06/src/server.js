@@ -1,6 +1,7 @@
 require('dotenv').config();
 const express = require('express');
-const { inputSchema, outputSchema } = require('./llm/schema');
+const { classifyBook } = require('./llm/client');
+const { inputSchema } = require('./llm/schema');
 
 const app = express();
 app.use(express.json());
@@ -21,7 +22,12 @@ app.post('/classify-book', async (req, res) => {
     });
   }
 
-  res.status(501).json({ error: 'Real model call not wired yet (Stage 2)' });
+  try {
+    const rawOutput = await classifyBook(parsed.data);
+    res.status(200).json({ raw: rawOutput });
+  } catch (err) {
+    res.status(500).json({ error: 'Model call failed', details: err.message });
+  }
 });
 
 app.listen(PORT, () => console.log(`Server running at http://localhost:${PORT}`));
