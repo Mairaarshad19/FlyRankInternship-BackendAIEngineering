@@ -93,43 +93,37 @@ export default function Home() {
     ]);
   };
 
-   const runFlow = async () => {
-    await fetch('/api/inngest', { method: 'PUT' });
-    const res = await fetch('http://localhost:8288/e/local', {
-      method: 'POST',
-      body: JSON.stringify({ name: 'flow/run', data: { nodes, edges, startNodeId: nodes[0].id } }),
-    });
-  };
+const [logs, setLogs] = useState<any[]>([]);
+const [running, setRunning] = useState(false);
 
+    const runFlow = async () => {
+      setRunning(true);
+      const res = await fetch('/api/run-flow', {
+        method: 'POST',
+        body: JSON.stringify({ nodes, edges, startNodeId: nodes[0].id }),
+      });
+      const data = await res.json();
+      setLogs(data.history);
+      setRunning(false);
+    };
   return (
-    <div style={{ height: '100vh' }}>
-      <button
-        onClick={addNode}
-        style={{
-          position: 'absolute',
-          zIndex: 50,
-          margin: 10,
-          padding: '8px 12px',
-          pointerEvents: 'auto',
-        }}
-      >
-        + Add Node
-      </button>
+      <div style={{ height: '100vh', position: 'relative' }}>
+    <button onClick={addNode} style={{ position: 'absolute', zIndex: 50, margin: 10, padding: '8px 12px' }}>
+      + Add Node
+    </button>
+    <button onClick={runFlow} disabled={running} style={{ position: 'absolute', zIndex: 50, margin: 10, left: 120 }}>
+      {running ? '⏳ Running...' : '▶ Run Flow'}
+    </button>
 
-     <button 
-        onClick={runFlow} 
-        style={{ 
-          position: 'absolute', 
-          zIndex: 50,        // pehle 10 tha, badha diya
-          margin: 10, 
-          left: 120,
-          padding: '8px 12px',
-          cursor: 'pointer',
-          pointerEvents: 'auto'
-        }}
-      >
-        ▶ Run Flow
-      </button>
+     <div style={{ position: 'absolute', top: 60, left: 10, zIndex: 50, background: 'white', padding: 10, border: '1px solid #ccc', borderRadius: 6, maxWidth: 300, maxHeight: 400, overflowY: 'auto' }}>
+      <strong>Execution Log</strong>
+      {logs.map((log, i) => (
+        <div key={i} style={{ marginTop: 8, fontSize: 12 }}>
+          <div><b>Node {log.nodeId}:</b> {log.prompt}</div>
+          <div style={{ color: log.decision === 'YES' ? 'green' : 'red' }}>→ {log.decision}</div>
+        </div>
+      ))}
+    </div>
 
       <ReactFlow
         nodes={nodesWithHandlers}
